@@ -77,7 +77,7 @@ export class PolarisChip extends LitElement {
     // there is a valid HTML template that is displayed on screen. It's important
     // to keep in mind that any broken HTML tags or JS variables here can cause
     // your element to not render so color coding and syntax checking with console
-    // open in your browser is critical!
+    // open in your browser is critical! 
 
     // ` is a special character that allows JS to print variables in it using
     // the ${} syntax, any variable can happen between those tags. Shown below
