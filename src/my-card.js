@@ -127,29 +127,21 @@ export class MyCard extends LitElement {
 
 render() {
   return html`
-  <div class="hw3">
-    <div class="controlBtns">
-      <button class="duplicate">Duplicate</button>
-      <button class="delete">Delete</button>
-      <button class="changeimg">Change Image</button>
-      <button class="changebg">Change Background</button>
-      <button class="changeheading">Change Heading</button>
-      <div class="hw2">
-        <div class="card"> 
-          <div class="header">
-            <header>${this.title}</header>
-          </div>
 
-          <img class="img" src="${this.img}" alt="${this.title}" width="200px">
-
-          <div class="paragraph">${this.desc}</div>
-          <a href="${this.link}">
-            <button class="btn">${this.btnText}</button>
-          </a>
+    <div class="hw2">
+      <div class="card"> 
+        <div class="header">
+          <header>${this.title}</header>
         </div>
+
+        <img class="img" src="${this.img}" alt="${this.title}" width="200px">
+
+        <div class="paragraph">${this.desc}</div>
+        <a href="${this.link}">
+          <button class="btn">${this.btnText}</button>
+        </a>
       </div>
     </div>
-  </div>
   `;
 }
 

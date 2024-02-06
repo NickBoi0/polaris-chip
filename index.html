@@ -33,6 +33,16 @@
   <!-- this is going to take the tag and change the title -->
 
   <h1>my-card</h1>
+  <div class="hw3">
+    <div class="controlBtns">
+  <button class="duplicate">Duplicate</button>
+  <button class="delete">Delete</button>
+  <button class="changeimg">Change Image</button>
+  <button class="changebg">Change Background</button>
+  <button class="changeheading">Change Heading</button>
+    </div>
+  </div>
+
   <my-card
     title="Welcome User!"
     link="https://hax.psu.edu/"
@@ -72,6 +82,54 @@ img="https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A1PA3989
   <!-- this is what is bringing in the definition for this tag -->
   <script type="module" src="./src/polaris-chip.js"></script>
   <script type="module" src="./src/my-card.js"></script>
+
+  <script>
+    document.querySelector(".duplicate").addEventListener("click", (e) => {
+  const max = 10;
+  const numCards = document.querySelectorAll(".card").length;
+
+  if (numCards < max) {
+    const newCard = document.querySelector(".card").cloneNode(true);
+    document.querySelector(".hw2").appendChild(newCard);
+  }
+});
+
+
+document.querySelector(".delete").addEventListener("click", (e) => {
+  const cards = document.querySelectorAll(".card");
+  if (cards.length > 1) {
+    const lastCard = cards[cards.length - 1];
+    document.querySelector(".hw2").removeChild(lastCard);
+  } 
+});
+
+document.querySelector(".changeimg").addEventListener("click", (e) => {
+  const image = document.querySelector(".card img");
+  this.img = "https://mir-s3-cdn-cf.behance.net/projects/404/8cc0ea125135231.Y3JvcCw4MTMsNjM1LDEzMCwyNjc.png";
+});
+
+document.querySelector(".changebg").addEventListener("click", (e) => {
+  const cards = document.querySelectorAll(".card");
+  cards.forEach(function (card) {
+    if (card.style.backgroundColor === "darkgray") {
+      card.style.backgroundColor = "gray";
+    } else {
+      card.style.backgroundColor = "darkgray";
+    }
+  });
+});
+
+document.querySelector(".changeheading").addEventListener("click", (e) => {
+  const heading = document.querySelectorAll(".header");
+  heading.forEach(function (header) {
+    header.innerText = "Welcome!";
+  });
+});
+
+  </script>
+
+
+
 </body>
 
 </html>
