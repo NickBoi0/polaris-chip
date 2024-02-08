@@ -84,47 +84,48 @@ img="https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A1PA3989
   <script type="module" src="./src/my-card.js"></script>
 
   <script>
-    document.querySelector(".duplicate").addEventListener("click", (e) => {
+document.querySelector(".duplicate").addEventListener("click", (e) => {
   const max = 10;
-  const numCards = document.querySelectorAll(".card").length;
+  const numCards = document.querySelectorAll("my-card").length;
 
   if (numCards < max) {
-    const newCard = document.querySelector(".card").cloneNode(true);
-    document.querySelector(".hw2").appendChild(newCard);
+    const ogCard = document.querySelector("my-card");
+    const newCard = document.createElement("my-card");
+    newCard.title = ogCard.title;
+    newCard.link = ogCard.link;
+    newCard.desc = ogCard.desc;
+    newCard.btnText = ogCard.btnText;
+    newCard.img = ogCard.img;
+    document.querySelector(".hw3").appendChild(newCard);
   }
 });
 
-
 document.querySelector(".delete").addEventListener("click", (e) => {
-  const cards = document.querySelectorAll(".card");
+  const cards = document.querySelectorAll("my-card");
   if (cards.length > 1) {
     const lastCard = cards[cards.length - 1];
-    document.querySelector(".hw2").removeChild(lastCard);
-  } 
+    lastCard.remove();
+  }
 });
 
 document.querySelector(".changeimg").addEventListener("click", (e) => {
-  const image = document.querySelector(".card img");
-  this.img = "https://mir-s3-cdn-cf.behance.net/projects/404/8cc0ea125135231.Y3JvcCw4MTMsNjM1LDEzMCwyNjc.png";
+  const firstCard = document.querySelector("my-card");
+  firstCard.img = "https://mir-s3-cdn-cf.behance.net/projects/404/8cc0ea125135231.Y3JvcCw4MTMsNjM1LDEzMCwyNjc.png";
 });
 
 document.querySelector(".changebg").addEventListener("click", (e) => {
-  const cards = document.querySelectorAll(".card");
-  cards.forEach(function (card) {
-    if (card.style.backgroundColor === "darkgray") {
-      card.style.backgroundColor = "gray";
-    } else {
-      card.style.backgroundColor = "darkgray";
-    }
+  const cards = document.querySelectorAll("my-card");
+  cards.forEach(card => {
+    const cardElement = card.shadowRoot.querySelector(".card");
+    cardElement.style.backgroundColor = cardElement.style.backgroundColor === "darkgray" ? "gray" : "darkgray";
   });
 });
 
 document.querySelector(".changeheading").addEventListener("click", (e) => {
-  const heading = document.querySelectorAll(".header");
-  heading.forEach(function (header) {
-    header.innerText = "Welcome!";
-  });
+  const firstHeading = document.querySelector("my-card");
+  firstHeading.title = "Welcome!";
 });
+
 
   </script>
 

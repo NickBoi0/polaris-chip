@@ -16,8 +16,8 @@ export class MyCard extends LitElement {
 
     this.title = "My card!";
     this.link = "#";
-    this.desc = "";
-    this.btnText = "";
+    this.desc = "Welcome to this cool PSU card!";
+    this.btnText = "Press";
     this.img = "";
   }
 
@@ -79,6 +79,7 @@ export class MyCard extends LitElement {
       .header {
         font-size: 50px;
         color: Blue;
+        text-align: center;
       }
 
       .img {
