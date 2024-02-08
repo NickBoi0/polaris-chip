@@ -19,6 +19,7 @@ export class MyCard extends LitElement {
     this.desc = "Welcome to this cool PSU card!";
     this.btnText = "Press";
     this.img = "";
+    this.fancy = false;
   }
 
   static get styles() {
@@ -26,35 +27,16 @@ export class MyCard extends LitElement {
       :host {
         display: block;
       }
-
-      .controlBtns {
-        margin: 32px 16px;
-      }
-
-      .duplicate,
-      .delete,
-      .changeimg,
-      .changebg,
-      .changeheading {
-        background-color: darkblue;
-        color: white;
-        text-align: center;
-        padding: 15px;
-        transition: .6s all ease-in-out;
-        border: 3px solid black;
-      }
-
-      .duplicate:focus,
-      .duplicate:hover,
-      .delete:focus,
-      .delete:hover,
-      .changeimg:focus,
-      .changeimg:hover,
-      .changebg:focus,
-      .changebg:hover,
-      .changeheading:focus,
-      .changeheading:hover {
-        background-color: blue;
+      :host([fancy]) .card {
+      display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(200deg, #4aec0a, #6dd3ff);
+        border: 2px solid #00008c;
+        transform: rotate(-360deg);
+        transition: all 20s ease-in-out;
+        box-shadow: 10px 10px 10px green;
       }
 
       .hw2 {
@@ -74,6 +56,7 @@ export class MyCard extends LitElement {
         display: flex;
         flex-direction: column;
         align-items: center;
+        overflow: hidden;
       }
 
       .header {
@@ -83,11 +66,11 @@ export class MyCard extends LitElement {
       }
 
       .img {
-        padding: 3px;
+        padding: 20px;
       }
 
       .paragraph {
-        padding: 5px 0;
+        padding: 5px;
         font-weight: bold;
         font-size: 20px;
         margin: 30px;
@@ -97,9 +80,10 @@ export class MyCard extends LitElement {
         background-color: blue;
         color: white;
         text-align: center;
-        padding: 15px;
+        padding: 20px;
         transition: .6s all ease-in-out;
         border: 3px solid black;
+        margin-top: 15px;
       }
 
       .btn:focus,
@@ -123,39 +107,72 @@ export class MyCard extends LitElement {
           font-size: 12px;
         }
       }
+
+      details summary {
+        text-align: center;
+        font-size: 20px;
+        padding: 8px 0;
+      }
+
+      details[open] summary {
+        font-weight: bold;
+      }
+      
+      details div {
+        border: 2px solid black;
+        text-align: center;
+        padding: 10px;
+        height: 70px;
+        overflow: auto;
+      }
+  
     `;
   }
 
-render() {
-  return html`
+  openChanged(e) {
+    console.log(e.target.getAttribute('open'));
+    if (e.target.getAttribute('open') !== null) {
+      this.fancy = true;
+    }
+    else {
+      this.fancy = false;
+    }
+  }
 
-    <div class="hw2">
-      <div class="card"> 
-        <div class="header">
-          <header>${this.title}</header>
+  render() {
+    return html`
+
+      <div class="hw2">
+        <div class="card"> 
+          <div class="header">
+            <header>${this.title}</header>
+          </div>
+
+          <img class="img" src="${this.img}" alt="${this.title}" width="200px">
+          <details ?open="${this.fancy}" @toggle="${this.openChanged}">
+            <summary>Description</summary>
+            <div>
+              <slot>${this.desc}</slot>
+            </div>
+          </details>
+          <a href="${this.link}">
+            <button class="btn">${this.btnText}</button>
+          </a>
         </div>
-
-        <img class="img" src="${this.img}" alt="${this.title}" width="200px">
-
-        <div class="paragraph">${this.desc}</div>
-        <a href="${this.link}">
-          <button class="btn">${this.btnText}</button>
-        </a>
       </div>
-    </div>
-  `;
-}
+    `;
+  }
 
-static get properties() {
-  return {
-    title: { type: String },
-    link: { type: String},
-    desc: { type: String},
-    img: { type: String},
-    btnText: { type: String},
-  };
+  static get properties() {
+    return {
+      title: { type: String },
+      link: { type: String},
+      desc: { type: String},
+      img: { type: String},
+      btnText: { type: String},
+      fancy: { type: Boolean, reflect: true},
+    };
+  }
 }
-}
-
 
 globalThis.customElements.define(MyCard.tag, MyCard);

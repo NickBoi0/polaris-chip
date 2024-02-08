@@ -19,6 +19,39 @@
     polaris-chip {
       margin: 16px;
     }
+    .cardlist {
+      display: flex;
+    }
+
+    .controlBtns {
+      margin: 32px 16px;
+    }
+
+    .duplicate,
+    .delete,
+    .changeimg,
+    .changebg,
+    .changeheading {
+      background-color: darkblue;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      transition: .6s all ease-in-out;
+      border: 3px solid black;
+    }
+
+    .duplicate:focus,
+    .duplicate:hover,
+    .delete:focus,
+    .delete:hover,
+    .changeimg:focus,
+    .changeimg:hover,
+    .changebg:focus,
+    .changebg:hover,
+    .changeheading:focus,
+    .changeheading:hover {
+      background-color: blue;
+    }
   </style>
   <title>polaris-chip / my-card</title>
 </head>
@@ -33,17 +66,20 @@
   <!-- this is going to take the tag and change the title -->
 
   <h1>my-card</h1>
+
   <div class="hw3">
     <div class="controlBtns">
-  <button class="duplicate">Duplicate</button>
-  <button class="delete">Delete</button>
-  <button class="changeimg">Change Image</button>
-  <button class="changebg">Change Background</button>
-  <button class="changeheading">Change Heading</button>
+      <button class="duplicate">Duplicate</button>
+      <button class="delete">Delete</button>
+      <button class="changeimg">Change Image</button>
+      <button class="changebg">Change Background</button>
+      <button class="changeheading">Change Heading</button>
     </div>
   </div>
 
+  <div class="cardlist">
   <my-card
+    fancy
     title="Welcome User!"
     link="https://hax.psu.edu/"
     desc="This is a page for you to navigate to the hack.psu.edu website! Above this text is the PSU Logo, super cool isn't it?"
@@ -51,33 +87,36 @@
     img="https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/Penn_State_Nittany_Lions_logo.svg/800px-Penn_State_Nittany_Lions_logo.svg.png"
   ></my-card>
   <my-card
-  title="Welcome Student!"
-  link="https://www.boredbutton.com/random"
-  desc="Test Description"
-  btnText="PRESS"
-  img="https://www.lions-pride.com/cdn/shop/products/SSP01M.jpg?v=1679517060"
-></my-card>  
-<my-card
-title="The Game!"
-link="https://www.boredbutton.com/random"
-desc="The Game"
-btnText="The Game?"
-img="https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png"
-></my-card>  
-<my-card
-title="Don't press the button!"
-link="https://www.boredbutton.com/random"
-desc="You should not press this button"
-btnText="press :o"
-img="https://ih1.redbubble.net/image.1513623286.5890/st,small,845x845-pad,1000x1000,f8f8f8.jpg"
-></my-card>  
-<my-card
-title="Totally Normal Card"
-link="https://www.boredbutton.com/random"
-desc="Nothing strange here, mind your own business"
-btnText="Not a Secret Button"
-img="https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A1PA3989PT17X31Y63D12350816W25000H8900Cx000000/views/1,width=550,height=550,appearanceId=1,backgroundColor=FFFFFF,noPt=true/le-lenny-face-or-le-face-face-hipster-4chan-meme-mens-longsleeve-shirt.jpg"
-></my-card>  
+    title="Welcome Student!"
+    link="https://www.boredbutton.com/random"
+    desc="Test Description"
+    btnText="PRESS"
+    img="https://www.lions-pride.com/cdn/shop/products/SSP01M.jpg?v=1679517060"
+  ></my-card>  
+  <my-card
+    fancy
+    title="The Game!"
+    link="https://www.boredbutton.com/random"
+    desc="The Game"
+    btnText="The Game?"
+    img="https://upload.wikimedia.org/wikipedia/en/9/9a/Trollface_non-free.png"
+  ></my-card>  
+  <my-card
+    title="Don't press the button!"
+    link="https://www.boredbutton.com/random"
+    desc="You should not press this button"
+    btnText="press :o"
+    img="https://ih1.redbubble.net/image.1513623286.5890/st,small,845x845-pad,1000x1000,f8f8f8.jpg"
+  ></my-card>  
+  <my-card
+    fancy
+    title="Totally Normal Card"
+    link="https://www.boredbutton.com/random"
+    desc="Nothing strange here, mind your own business"
+    btnText="Not a Secret Button"
+    img="https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A1PA3989PT17X31Y63D12350816W25000H8900Cx000000/views/1,width=550,height=550,appearanceId=1,backgroundColor=FFFFFF,noPt=true/le-lenny-face-or-le-face-face-hipster-4chan-meme-mens-longsleeve-shirt.jpg"
+  ></my-card>  
+</div>
 
   <!-- this is what is bringing in the definition for this tag -->
   <script type="module" src="./src/polaris-chip.js"></script>
@@ -96,7 +135,7 @@ document.querySelector(".duplicate").addEventListener("click", (e) => {
     newCard.desc = ogCard.desc;
     newCard.btnText = ogCard.btnText;
     newCard.img = ogCard.img;
-    document.querySelector(".hw3").appendChild(newCard);
+    document.querySelector(".cardlist").appendChild(newCard);
   }
 });
 
