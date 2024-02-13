@@ -35,7 +35,7 @@ export class MyCard extends LitElement {
         background: linear-gradient(200deg, #4aec0a, #6dd3ff);
         border: 2px solid #00008c;
         transform: rotate(-360deg);
-        transition: all 20s ease-in-out;
+        transition: transform 20s ease-in-out;
         box-shadow: 10px 10px 10px green;
       }
 
