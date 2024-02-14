@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-
+import "@lrnwebcomponents/meme-maker/meme-maker.js";
 /**
  * Now it's your turn. Here's what we need to try and do
  * 1. 
@@ -19,6 +19,8 @@ export class MyCard extends LitElement {
     this.desc = "Welcome to this cool PSU card!";
     this.btnText = "Press";
     this.img = "";
+    this.toptext = "toptext";
+    this.bottomtext= "bottomtext";
     this.fancy = false;
   }
 
@@ -148,7 +150,7 @@ export class MyCard extends LitElement {
             <header>${this.title}</header>
           </div>
 
-          <img class="img" src="${this.img}" alt="${this.title}" width="200px">
+          <meme-maker class="img" alt="meme-maker" image-url="${this.img}" top-text="${this.toptext}" bottom-text="${this.bottomtext}"></meme-maker>
           <details ?open="${this.fancy}" @toggle="${this.openChanged}">
             <summary>Description</summary>
             <div>
@@ -169,6 +171,8 @@ export class MyCard extends LitElement {
       link: { type: String},
       desc: { type: String},
       img: { type: String},
+      toptext: { type: String},
+      bottomtext: { type: String},
       btnText: { type: String},
       fancy: { type: Boolean, reflect: true},
     };
