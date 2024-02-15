@@ -53,10 +53,14 @@
       background-color: blue;
     }
   </style>
-  <title>polaris-chip / my-card</title>
+  <title>polaris-chip / my-card / counter-app</title>
 </head>
 
 <body>
+
+  <h1>counter-app</h1>
+  <counter-app></counter-app>
+
   <h1>polaris-chip</h1> 
   <!-- this is going to do whatever the tag's defaults are -->
   <polaris-chip title="News of Record" link="https://hax.psu.edu/"></polaris-chip>
@@ -124,15 +128,19 @@
     btnText="Not a Secret Button"
     img="https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A1PA3989PT17X31Y63D12350816W25000H8900Cx000000/views/1,width=550,height=550,appearanceId=1,backgroundColor=FFFFFF,noPt=true/le-lenny-face-or-le-face-face-hipster-4chan-meme-mens-longsleeve-shirt.jpg"
     toptext="no clue what"
-    bottomtext="whath clue no"
+    bottomtext="what clue no"
   ></my-card>  
 </div>
 
   <!-- this is what is bringing in the definition for this tag -->
   <script type="module" src="./src/polaris-chip.js"></script>
   <script type="module" src="./src/my-card.js"></script>
+  <script type="module" src="./src/counter-app.js"></script>
+
 
   <script>
+
+
 document.querySelector(".duplicate").addEventListener("click", (e) => {
   const max = 10;
   const numCards = document.querySelectorAll("my-card").length;
@@ -177,8 +185,6 @@ document.querySelector(".changeheading").addEventListener("click", (e) => {
 
 
   </script>
-
-<counter-app></counter-app>
 
 </body>
 
