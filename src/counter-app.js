@@ -31,7 +31,8 @@ export class CounterApp extends LitElement {
       .wrapper {
         display: flex;
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content: center;
+
       }
 
       .card {
@@ -128,18 +129,19 @@ export class CounterApp extends LitElement {
           color: purple;
         }
       </style>
-      <div class="wrapper">
-          <div class="card">
-            <div class="header">
-              <header>${this.counter}</header>
+      <confetti-container id="confetti">
+        <div class="wrapper">
+            <div class="card">
+              <div class="header">
+                <header>${this.counter}</header>
+              </div>
+              <div class="buttonRow">
+                <button @click="${this.subtractOne}" ?disabled="${this.min === this.counter}" class="subtractBtn">-</button>
+                <button @click="${this.addOne}" ?disabled="${this.max === this.counter}" class="addBtn">+</button>
+              </div>
             </div>
-            <div class="buttonRow">
-              <button @click="${this.subtractOne}" ?disabled="${this.min === this.counter}" class="subtractBtn">-</button>
-              <button @click="${this.addOne}" ?disabled="${this.max === this.counter}" class="addBtn">+</button>
-            </div>
-          </div>
-      </div>
-      <confetti-container id="confetti"></confetti-container>
+        </div>
+      </confetti-container>
     `;
   }
 
