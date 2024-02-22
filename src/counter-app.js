@@ -32,7 +32,6 @@ export class CounterApp extends LitElement {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-
       }
 
       .card {
