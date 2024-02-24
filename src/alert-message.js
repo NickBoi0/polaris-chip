@@ -8,56 +8,63 @@ export class AlertMessage extends LitElement {
 
   constructor() {
     super();
-
+    this.sticky = false;
   }
 
   static get styles() {
     return css`
 
       :host {
-        display: inline-flex;
+        margin: 0;
+      }
+      :host([sticky]) .banner_wrapper {
+        position: fixed;
       }
 
-      .wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+      .banner_wrapper {
+        background: #a10000;
+        padding: 20px;
+        top: 0;
+        width: 100%;
+        border: 2px solid black;
       }
 
       .banner {
-        background-color: lightcoral;
-        padding: 20px 100% 20px 20px;
-        top: 0;
-        position: fixed;
-        //position: absolute;
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
         align-items: center;
       }
 
-      .header {
-        font-size: 50px;
-        color: black;
+      .banner__text {
+        flex-grow: 1;
+        line-height: 1.4;
+        font-family: "Quicksand", sans-serif;
         text-align: center;
-        font-weight: bold;
       }
+      
+      
 
     `;
   }
 
   render() {
     return html`   
-        <div class="wrapper">
-            <div class="banner">
-                <div class="header">
-                    <header>Campus Alert Dialog</header>
-                </div>
-            </div>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+      <div class="banner_wrapper">
+        <div class="banner">
+          <div class="banner__text">
+            <strong>AlertMessage:</strong> Weather in State College is wack
+          </div>
+          <span class="material-symbols-outlined">expand_more</span>
         </div>
+      </div>
     `;
   }
 
   static get properties() {
     return {
-
+      sticky: { type: Boolean, reflect: true},
     };
   }
 }
