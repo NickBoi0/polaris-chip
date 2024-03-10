@@ -11,13 +11,13 @@ export class AlertMessage extends LitElement {
     this.sticky = false;
     this.opened = true;
     this.status = "notice";
-    this.date = '';
-    this.message = 'ALERT MESSAGE';
+    this.date = 'Current Date';
+    this.message = 'We are currently experiencing technical difficulties :)';
 
     const storedStatus = localStorage.getItem('alertStatus');
     if (storedStatus === 'closed') {
       this.opened = false;
-      this.style.setProperty('--custom-alert-height', '25px');
+      this.style.setProperty('--height', '60px');
     }  
   }
 
@@ -30,46 +30,54 @@ export class AlertMessage extends LitElement {
       }
 
       :host([open]) .banner_wrapper {
-        max-height: var(--custom-alert-height);
+        max-height: var(--height);
       }
 
-      :host([status="notice"]) .banner_wrapper {
-        background-color: var(--custom-alert-notice-bg, var(--custom-alert-bg, #a10000));
+      :host([status="notice"]) .design {
+        background-color: var(--notice-bg, var(--bg, #a10000));
       }
 
-      :host([status="warning"]) .banner_wrapper {
-        background-color: var(--custom-alert-warning-bg, var(--custom-alert-bg, #007a2d));
+      :host([status="warning"]) .design {
+        background-color: var(--warning-bg, var(--bg, #007a2d));
       }
 
-      :host([status="alert"]) .banner_wrapper {
-        background-color: var(--custom-alert-alert-bg, var(--custom-alert-bg, #002d70));
+      :host([status="alert"]) .design {
+        background-color: var(--alert-bg, var(--bg, #002d70));
       }
 
       .closed .banner_wrapper {
-        height: var(--custom-alert-closed-height, var(--custom-alert-height, 25px));
+        height: var(--closed-height, var(--height, 60px));
       }
 
       .banner_wrapper {
-        background: #a10000;
-        padding: 20px;
-        height: var(--custom-alert-height, 100px);
-        border: 2px solid black;
+        background-color: lightseagreen;
+        height: var(--height, 100px);
         transition: all 0.2s ease;
+        overflow: hidden;
       }
 
       .banner {
+        padding: 0px;
         display: flex;
+        justify-content: center;
+        align-items: center;
+        transform: skew(20deg);
+
+        flex-direction: column;
       }
 
       .banner-heading {
         text-align: center;
         color: white;
         flex: 1;
+        
       }
       
       .banner-opened-text {
         text-align: center;
         color: white;
+        transform: skew(20deg);
+        margin-top: 10px;
       }
       
       .toggle-button {
@@ -78,6 +86,16 @@ export class AlertMessage extends LitElement {
         background: red;
         color: #fff;  
         font-size: 14px;
+        margin-top: 10px;
+      }
+
+      .design {
+        width: 98%;
+        height: 100%;
+        background-color: var(--bg);
+        transform-origin: bottom right; 
+        transform: skew(-20deg);
+        
       }
 
     `;
@@ -87,10 +105,10 @@ export class AlertMessage extends LitElement {
     this.opened = !this.opened;
   
     if (!this.opened) {
-      this.style.setProperty('--custom-alert-height', '25px');
+      this.style.setProperty('--height', '60px');
       localStorage.setItem('alertStatus', 'closed');
     } else {
-      this.style.removeProperty('--custom-alert-height');
+      this.style.removeProperty('--height');
       localStorage.removeItem('alertStatus');
     }
 
@@ -100,19 +118,20 @@ export class AlertMessage extends LitElement {
   render() {
     return html`   
       <div class="banner_wrapper">
-        <div class="banner">
-          <div class="banner-heading">
-            <strong>AlertMessage:</strong> Weather in State College is wack
+        <div class="design">
+          <div class="banner">
+            <div class="banner-heading">
+              <strong>PSU Alert Message</strong> || <strong>Date:</strong> ${this.date}
+            </div>
+            <button class="toggle-button" @click="${this.sizeBanner}">
+              ${this.opened ? 'Close' : 'Open'} Alert
+            </button>
           </div>
-          <button class="toggle-button" @click="${this.sizeBanner}">
-            ${this.opened ? 'Close' : 'Open'} Alert
-          </button>
-        </div>
-        <div class="banner-opened-text">
-          ${this.opened ? html`
-            <div class="message">${this.message}</div>
-            <div class="date">${this.date}</div>
-          ` : ''}
+          <div class="banner-opened-text">
+            ${this.opened ? html`
+              <div class="message">${this.message}</div>
+            ` : ''}
+          </div>
         </div>
       </div>
     `;
