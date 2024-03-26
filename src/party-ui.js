@@ -45,6 +45,7 @@ export class PartyUI extends DDD {
         padding: 10px 10px;
         text-align: center;
         color: white;
+        font-family: "Press Start 2P", system-ui;
       }
 
       .addsymbl {
@@ -176,6 +177,14 @@ export class PartyUI extends DDD {
     }
     this.requestUpdate();
   }
+
+  updateName(e, index) {
+    const newName = e.target.value;
+    this.players[index] = newName;
+    if (newName !== "") {
+      this.requestUpdate();
+    }
+  }
   
   render() {
     return html`
@@ -189,7 +198,7 @@ export class PartyUI extends DDD {
                     <div class="character-wrapper">
                       <rpg-character seed="${player}"></rpg-character>
                     </div>
-                    <input type="text" class="nametf" .value="${player || 'ENTER'}" @change="${(e) => this.saveName(e, index)}">
+                    <input type="text" class="nametf" .value="${player || "ENTER"}"  @input="${(e) => this.updateName(e, index)}" @change="${(e) => this.saveName(e, index)}">
                     <div class="nameline"></div>
                     <div class="btnwrapper">
                       ${index > 0 ? html`
