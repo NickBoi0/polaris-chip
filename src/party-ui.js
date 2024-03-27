@@ -12,6 +12,12 @@ export class PartyUI extends DDD {
     super();
     this.players = ["You"];
     this.numChar = 1;
+    this.firstVisibleIndex = 0;
+
+    this.soundEffects = {
+      victory: new Audio('"C:\Users\nicky\Downloads\winsquare-6993.mp3"'),
+    };
+
   }
 
   static get styles() {
@@ -19,13 +25,17 @@ export class PartyUI extends DDD {
     return css`
 
       :host {
-        display: inline-flex;
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh;
       }
 
       .lightbg {
         background-color: var(--ddd-theme-default-beaver70);
         padding: 10px;
-        margin: 100px;
+        height: 500px;
+        width: 950px;
         display: flex;
 
         flex-direction: column;
@@ -35,9 +45,9 @@ export class PartyUI extends DDD {
 
       .darkbg {
         background-color: var(--ddd-theme-default-beaverBlue);
-        padding: 75px 150px;
-        bottom: -10px;
-        margin-bottom: -20px;
+        height: 500px;
+        width: 925px;
+        padding: 10px;
       }
 
       .addbtn {
@@ -46,6 +56,7 @@ export class PartyUI extends DDD {
         text-align: center;
         color: white;
         font-family: "Press Start 2P", system-ui;
+        margin-right: 25px;
       }
 
       .addsymbl {
@@ -63,6 +74,7 @@ export class PartyUI extends DDD {
 
       .charlist {
         display: flex;
+        justify-content: center;
       }
 
       .chars {
@@ -82,6 +94,7 @@ export class PartyUI extends DDD {
         font-size: 25px;
         width: 150px;
         margin-top: 10px;
+        outline: none;
       }
 
       .nameline {
@@ -93,10 +106,18 @@ export class PartyUI extends DDD {
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-top: 10px;
+      }
+
+      .savebtnwrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 40%;
       }
 
       .savebtn {
-        margin-top: 15px;
         background: transparent;
         border: transparent;
         color: white;
@@ -121,7 +142,21 @@ export class PartyUI extends DDD {
         font-size: 30px;
         font-family: "Press Start 2P", system-ui;
       }
+
+      .backarrow,
+      .forwardarrow {
+        font-family: "Press Start 2P", system-ui;
+        font-size: 65px;
+        color: white;
+        margin-top: 80px;
+        background-color: transparent;
+        border: transparent;
+      }
       
+      .backarrow:focus,
+      .backarrow:hover,
+      .forwardarrow:focus,
+      .forwardarrow:hover,
       .removebtn:focus,
       .removebtn:hover,
       .addsymbl:focus,
@@ -143,6 +178,7 @@ export class PartyUI extends DDD {
 
   
   makeItRain() {
+    this.playVictorySound()
     import("@lrnwebcomponents/multiple-choice/lib/confetti-container.js").then(
       (module) => {
         setTimeout(() => {
@@ -153,17 +189,25 @@ export class PartyUI extends DDD {
   }
   
   add(e) {
-    if (this.numChar < 4) {
-      this.players.push("");
-      this.numChar++;
-      this.requestUpdate(); 
-    } 
+    this.players.push("");
+    this.numChar++;
+
+    if (this.numChar > 4) {
+      this.firstVisibleIndex++;
+    }
+
+    this.requestUpdate(); 
   }
 
   remove(index) {
     if (this.numChar > 1) {
       this.players.splice(index, 1); 
       this.numChar--;
+
+      if (this.firstVisibleIndex != 0) {
+        this.firstVisibleIndex--;
+      }
+      
       this.requestUpdate(); 
     } 
   }
@@ -185,35 +229,82 @@ export class PartyUI extends DDD {
       this.requestUpdate();
     }
   }
+
+  moveBack() {
+    if (this.firstVisibleIndex > 0) {
+      this.firstVisibleIndex--;
+      this.requestUpdate();
+    }
+  }
+  
+  moveForward() {
+    if (this.firstVisibleIndex < this.players.length - 4) {
+      this.firstVisibleIndex++;
+      this.requestUpdate();
+    }
+  }
+
+  playVictorySound() {
+    this.soundEffects.victory.play();
+  }
   
   render() {
+
+    //Only shows a max of 4 players at a time (for screen fitting purposes)
+    const visPlayers = this.players.slice(this.firstVisibleIndex, this.firstVisibleIndex + 4);
+
     return html`
       <div class="project1">
         <div class="lightbg">
           <confetti-container id="confetti">
             <div class="darkbg">
               <div class="charlist">
-                ${this.players.map((player, index) => html`
+
+              <!-- Back arrow that only appears if there are players with a low index that are hidden -->
+                ${this.firstVisibleIndex > 0 ? html`
+                  <button @click="${this.moveBack}" class="backarrow"><</button>
+                ` : ''}
+
+                <!-- Creates a map from the player list so that each player is displayed with the same design -->
+                ${visPlayers.map((player, index) => html`
                   <div class="chars">
                     <div class="character-wrapper">
                       <rpg-character seed="${player}"></rpg-character>
                     </div>
-                    <input type="text" class="nametf" .value="${player || "ENTER"}"  @input="${(e) => this.updateName(e, index)}" @change="${(e) => this.saveName(e, index)}">
+
+                    <!-- Allows you to enter in any player's name with realtime changes to the player -->
+                    <input type="text" class="nametf" .value="${player || "ENTER"}"  @input="${(e) => this.updateName(e, index + this.firstVisibleIndex)}" @change="${(e) => this.saveName(e, index + this.firstVisibleIndex)}">
+                    
                     <div class="nameline"></div>
                     <div class="btnwrapper">
-                      ${index > 0 ? html`
-                        <button @click="${() => this.saveName(index, this.shadowRoot.querySelector(`#name-${index}`).value)}" class="savebtn">> SAVE</button>
-                        <button @click="${() => this.remove(index)}" class="removebtn">> REMOVE</button>
+
+                    <!-- Save and delete button only appear on players who aren't you (first index) -->
+                      ${index + this.firstVisibleIndex > 0 ? html`
+                        <button class="savebtn">> SAVE</button>
+                        <button @click="${() => this.remove(index + this.firstVisibleIndex)}" class="removebtn">> REMOVE</button>
                       ` : ''}
+
+
                     </div>
                   </div>
                 `)}
+
+                <!-- The add button to add new players -->
                 <div class=addbtn>
                   <button @click="${this.add}" class="addsymbl">+</button>
-                  <div class="numchar">${this.numChar}/4 <br> Added</div>
+                  <div class="numchar">${this.numChar} <br> Added</div>
                 </div>
+
+                <!-- Forward arrow that only appears if there are players with a high index that are hidden -->
+                ${this.firstVisibleIndex < this.players.length - 4 ? html`
+                  <button @click="${this.moveForward}" class="forwardarrow">></button>
+                ` : ''}
               </div>
-              <button @click="${this.makeItRain}" class="finishbtn">> SAVE PLAYERS</button>
+
+              <!-- Save button that runs the confetti -->
+              <div class="savebtnwrap">
+                <button @click="${this.makeItRain}" class="finishbtn">> SAVE PLAYERS</button>
+              </div>
             </div>
           </confetti-container>
         </div>
@@ -224,9 +315,10 @@ export class PartyUI extends DDD {
   static get properties() {
     return {
         players: { type: Array },
-        numChar: { type: Number, reflext: true},
+        numChar: { type: Number, reflect: true},
+        firstVisibleIndex: { type: Number, reflect: true},
     };
-  }s
+  }
 }
 
 globalThis.customElements.define(PartyUI.tag, PartyUI);
