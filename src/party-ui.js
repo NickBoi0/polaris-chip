@@ -12,7 +12,7 @@ export class PartyUI extends DDD {
     super();
     this.players = ["You"];
     this.numChar = 1;
-    this.firstVisibleIndex = 0;
+    this.startIndex = 0;
 
     this.soundEffects = {
       victory: new Audio('"C:\Users\nicky\Downloads\winsquare-6993.mp3"'),
@@ -193,7 +193,7 @@ export class PartyUI extends DDD {
     this.numChar++;
 
     if (this.numChar > 4) {
-      this.firstVisibleIndex++;
+      this.startIndex++;
     }
 
     this.requestUpdate(); 
@@ -204,8 +204,8 @@ export class PartyUI extends DDD {
       this.players.splice(index, 1); 
       this.numChar--;
 
-      if (this.firstVisibleIndex != 0) {
-        this.firstVisibleIndex--;
+      if (this.startIndex != 0) {
+        this.startIndex--;
       }
       
       this.requestUpdate(); 
@@ -231,15 +231,15 @@ export class PartyUI extends DDD {
   }
 
   moveBack() {
-    if (this.firstVisibleIndex > 0) {
-      this.firstVisibleIndex--;
+    if (this.startIndex > 0) {
+      this.startIndex--;
       this.requestUpdate();
     }
   }
   
   moveForward() {
-    if (this.firstVisibleIndex < this.players.length - 4) {
-      this.firstVisibleIndex++;
+    if (this.startIndex < this.players.length - 4) {
+      this.startIndex++;
       this.requestUpdate();
     }
   }
@@ -251,7 +251,7 @@ export class PartyUI extends DDD {
   render() {
 
     //Only shows a max of 4 players at a time (for screen fitting purposes)
-    const visPlayers = this.players.slice(this.firstVisibleIndex, this.firstVisibleIndex + 4);
+    const visPlayers = this.players.slice(this.startIndex, this.startIndex + 4);
 
     return html`
       <div class="project1">
@@ -261,7 +261,7 @@ export class PartyUI extends DDD {
               <div class="charlist">
 
               <!-- Back arrow that only appears if there are players with a low index that are hidden -->
-                ${this.firstVisibleIndex > 0 ? html`
+                ${this.startIndex > 0 ? html`
                   <button @click="${this.moveBack}" class="backarrow"><</button>
                 ` : ''}
 
@@ -273,15 +273,15 @@ export class PartyUI extends DDD {
                     </div>
 
                     <!-- Allows you to enter in any player's name with realtime changes to the player -->
-                    <input type="text" class="nametf" .value="${player || "ENTER"}"  @input="${(e) => this.updateName(e, index + this.firstVisibleIndex)}" @change="${(e) => this.saveName(e, index + this.firstVisibleIndex)}">
+                    <input type="text" class="nametf" .value="${player || "ENTER"}"  @input="${(e) => this.updateName(e, index + this.startIndex)}" @change="${(e) => this.saveName(e, index + this.startIndex)}">
                     
                     <div class="nameline"></div>
                     <div class="btnwrapper">
 
                     <!-- Save and delete button only appear on players who aren't you (first index) -->
-                      ${index + this.firstVisibleIndex > 0 ? html`
+                      ${index + this.startIndex > 0 ? html`
                         <button class="savebtn">> SAVE</button>
-                        <button @click="${() => this.remove(index + this.firstVisibleIndex)}" class="removebtn">> REMOVE</button>
+                        <button @click="${() => this.remove(index + this.startIndex)}" class="removebtn">> REMOVE</button>
                       ` : ''}
 
 
@@ -296,7 +296,7 @@ export class PartyUI extends DDD {
                 </div>
 
                 <!-- Forward arrow that only appears if there are players with a high index that are hidden -->
-                ${this.firstVisibleIndex < this.players.length - 4 ? html`
+                ${this.startIndex < this.players.length - 4 ? html`
                   <button @click="${this.moveForward}" class="forwardarrow">></button>
                 ` : ''}
               </div>
@@ -316,7 +316,7 @@ export class PartyUI extends DDD {
     return {
         players: { type: Array },
         numChar: { type: Number, reflect: true},
-        firstVisibleIndex: { type: Number, reflect: true},
+        startIndex: { type: Number, reflect: true},
     };
   }
 }
