@@ -10,10 +10,12 @@ export class PartyUI extends DDD {
 
   constructor() {
     super();
-    this.players = ["You"];
-    this.numChar = 1;
+    this.players = ["You", "ENTER"];
+    this.numChar = 2;
     this.startIndex = 0;
     this.ablaze = false;
+    this.backArrowBool = false;
+    this.forwardArrowBool = false;
   }
 
   static get styles() {
@@ -28,7 +30,22 @@ export class PartyUI extends DDD {
         align-items: center; 
         height: 100vh;
       }
-      
+
+      :host([backArrowBool]) .backarrow {
+        opacity: 1;
+        color: white;
+      }
+      :host([forwardArrowBool]) .forwardarrow {
+        opacity: 1;
+        color: white;
+      } 
+      :host([backArrowBool="true"]) .backarrow:focus, .backarrow:hover {
+        animation: blinker .5s linear infinite;
+      }   
+      :host([forwardArrowBool="true"]) .forwardarrow:focus, .forwardarrow:hover {
+        animation: blinker .5s linear infinite;
+      }
+
       /* ignore this it's a secret :) */
       .secret {
         position: relative;
@@ -165,10 +182,11 @@ export class PartyUI extends DDD {
       .forwardarrow {
         font-family: "Press Start 2P", system-ui;
         font-size: 65px;
-        color: white;
+        color: black;
+        opacity: .2;
         margin-top: var(--ddd-spacing-20);
         background-color: transparent;
-        border: transparent;
+        border:  transparent;
       }
 
       .title {
@@ -176,10 +194,6 @@ export class PartyUI extends DDD {
         animation: blinker2 2s linear infinite;
       }
       
-      .backarrow:focus,
-      .backarrow:hover,
-      .forwardarrow:focus,
-      .forwardarrow:hover,
       .removebtn:focus,
       .removebtn:hover,
       .savebtn:focus,
@@ -247,7 +261,7 @@ export class PartyUI extends DDD {
     if (this.numChar > 4) {
       this.startIndex++;
     }
-
+    this.updateArrowStyles();
     this.requestUpdate(); 
   }
 
@@ -255,7 +269,7 @@ export class PartyUI extends DDD {
   remove(index) {
 
     this.noWalk();
-
+    
     if (this.numChar > 1) {
       this.players.splice(index, 1); 
       this.numChar--;
@@ -263,7 +277,7 @@ export class PartyUI extends DDD {
       if (this.startIndex != 0) {
         this.startIndex--;
       }
-      
+      this.updateArrowStyles();
       this.requestUpdate(); 
     } 
   }
@@ -309,6 +323,7 @@ export class PartyUI extends DDD {
   moveBack() {
     if (this.startIndex > 0) {
       this.startIndex--;
+      this.updateArrowStyles();
       this.requestUpdate();
     }
   }
@@ -317,6 +332,7 @@ export class PartyUI extends DDD {
   moveForward() {
     if (this.startIndex < this.players.length - 4) {
       this.startIndex++;
+      this.updateArrowStyles();
       this.requestUpdate();
     }
   }
@@ -328,6 +344,7 @@ export class PartyUI extends DDD {
     });
   }
 
+  //Sets fire to the players
   setAblaze() {
     if (!this.ablaze) {
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
@@ -341,6 +358,24 @@ export class PartyUI extends DDD {
       });
       this.ablaze = !this.ablaze;
     }
+  }
+
+  //Updates arrows when they are clickable
+  updateArrowStyles() {
+
+    if (this.startIndex > 0) {
+      this.backArrowBool = true;
+    } else {
+      this.backArrowBool = false;
+    }
+
+    if (this.startIndex < this.players.length - 4) {
+      this.forwardArrowBool = true;
+    } else {
+      this.forwardArrowBool = false;
+    }
+
+    this.requestUpdate();
   }
   
   render() {
@@ -357,9 +392,7 @@ export class PartyUI extends DDD {
               <div class="charlist">
 
               <!-- Back arrow that only appears if there are players with a low index that are hidden -->
-                ${this.startIndex > 0 ? html`
-                  <button @click="${this.moveBack}" class="backarrow"><</button>
-                ` : ''}
+                <button @click="${this.moveBack}" class="backarrow"><</button>
 
                 <!-- Creates a map from the player list so that each player is displayed with the same design -->
                 ${visPlayers.map((player, index) => html`
@@ -392,9 +425,7 @@ export class PartyUI extends DDD {
                 </div>
 
                 <!-- Forward arrow that only appears if there are players with a high index that are hidden -->
-                ${this.startIndex < this.players.length - 4 ? html`
-                  <button @click="${this.moveForward}" class="forwardarrow">></button>
-                ` : ''}
+                <button @click="${this.moveForward}" class="forwardarrow">></button>
               </div>
 
               <!-- Save button that runs the confetti -->
@@ -421,6 +452,8 @@ export class PartyUI extends DDD {
         startIndex: { type: Number, reflect: true},
         walkingBool: { type: Boolean, reflect: true},
         ablaze: { type: Boolean, reflect: true},
+        backArrowBool: { type: Boolean, reflect: true},
+        forwardArrowBool: { type: Boolean, reflect: true},
     };
   }
 }
