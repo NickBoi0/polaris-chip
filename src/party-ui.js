@@ -13,11 +13,7 @@ export class PartyUI extends DDD {
     this.players = ["You"];
     this.numChar = 1;
     this.startIndex = 0;
-
-    this.soundEffects = {
-      victory: new Audio('"C:\Users\nicky\Downloads\winsquare-6993.mp3"'),
-    };
-
+    this.ablaze = false;
   }
 
   static get styles() {
@@ -26,17 +22,30 @@ export class PartyUI extends DDD {
 
       :host {
         display: flex;
+
+        background-image: url("https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg");
         justify-content: center; 
         align-items: center; 
         height: 100vh;
       }
+      
+      /* ignore this it's a secret :) */
+      .secret {
+        position: relative;
+        top: 95px;
+        left: 183px;
+        
+        padding: 5px;
+        border: white;
+      }
 
       .lightbg {
-        background-color: var(--ddd-theme-default-beaver70);
-        padding: 10px;
-        height: 500px;
-        width: 950px;
+        background-color: var(--ddd-theme-default-nittanyNavy);
+        padding: var(--ddd-spacing-4);
+        height: 525px;
+        width: 975px;
         display: flex;
+        border: 3px solid var(--ddd-theme-default-slateLight);
 
         flex-direction: column;
         align-items: center;
@@ -45,26 +54,32 @@ export class PartyUI extends DDD {
 
       .darkbg {
         background-color: var(--ddd-theme-default-beaverBlue);
-        height: 500px;
+        height: 510px;
         width: 925px;
-        padding: 10px;
+        margin-top: var(--ddd-spacing-4);
+        padding: var(--ddd-spacing-4);
+        border: 3px solid var(--ddd-theme-default-skyMaxLight);
       }
 
       .addbtn {
-        border: 3px dashed white;
-        padding: 10px 10px;
+        border: var(--ddd-spacing-1) dashed white;
+        padding: var(--ddd-spacing-3) var(--ddd-spacing-3);
         text-align: center;
         color: white;
         font-family: "Press Start 2P", system-ui;
-        margin-right: 25px;
+        margin-right: var(--ddd-spacing-6);
+
+        transition: .3s all ease-in-out;
       }
 
       .addsymbl {
         font-size: 50px;
-        margin: 25px 0px 0px 0px;
+        margin: var(--ddd-spacing-6);
         background-color: transparent;
         border: transparent;
         color: white;
+
+        transition: .3s all ease-in-out;
       }
       
       .numchar {
@@ -82,7 +97,7 @@ export class PartyUI extends DDD {
       }
 
       .character-wrapper {
-        margin-bottom: 10px;
+        margin-bottom: var(--ddd-spacing-3);
       }
 
       .nametf {
@@ -93,28 +108,20 @@ export class PartyUI extends DDD {
         border: transparent;
         font-size: 25px;
         width: 150px;
-        margin-top: 10px;
+        margin-top: var(--ddd-spacing-4);
         outline: none;
       }
 
       .nameline {
-        border-top: 3px solid #bbb;
-        margin: 0px 20px;
+        border-top: var(--ddd-spacing-1) solid var(--ddd-theme-default-limestoneGray);
+        margin: var(--ddd-spacing-0) var(--ddd-spacing-5);
       }
 
       .btnwrapper {
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-top: 10px;
-      }
-
-      .savebtnwrap {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
-        height: 40%;
+        margin-top: var(--ddd-spacing-3);
       }
 
       .savebtn {
@@ -126,7 +133,7 @@ export class PartyUI extends DDD {
       }
 
       .removebtn {
-        margin-top: 15px;
+        margin-top: var(--ddd-spacing-4);
         background: transparent;
         border: transparent;
         color: white;
@@ -134,8 +141,19 @@ export class PartyUI extends DDD {
         font-family: "Press Start 2P", system-ui;
       }
 
-      .finishbtn {
-        margin-top: 100px;
+      .bottombtnwrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 40%;
+      }
+      
+      .title,
+      .finishbtn,
+      .firebtn {
+        text-align: center;
+        margin-top: var(--ddd-spacing-8);
         background: transparent;
         border: transparent;
         color: white;
@@ -148,9 +166,14 @@ export class PartyUI extends DDD {
         font-family: "Press Start 2P", system-ui;
         font-size: 65px;
         color: white;
-        margin-top: 80px;
+        margin-top: var(--ddd-spacing-20);
         background-color: transparent;
         border: transparent;
+      }
+
+      .title {
+        font-size: 50px;
+        animation: blinker2 2s linear infinite;
       }
       
       .backarrow:focus,
@@ -159,13 +182,21 @@ export class PartyUI extends DDD {
       .forwardarrow:hover,
       .removebtn:focus,
       .removebtn:hover,
-      .addsymbl:focus,
-      .addsymbl:hover,
       .savebtn:focus,
       .savebtn:hover,
       .finishbtn:focus,
-      .finishbtn:hover {
+      .finishbtn:hover,
+      .firebtn:focus,
+      .firebtn:hover {
         animation: blinker .5s linear infinite;
+      }
+      
+      .addsymbl:focus,
+      .addsymbl:hover,
+      .addbtn:focus,
+      .addbtn:hover {
+        color: var(--ddd-theme-default-potential50);
+        border-color: var(--ddd-theme-default-potential50);
       }
 
       @keyframes blinker {
@@ -173,23 +204,44 @@ export class PartyUI extends DDD {
           opacity: 0;
         }
       }
+      @keyframes blinker2 {
+        50% {
+          opacity: 0;
+        }
+      }
     `;
   }
 
-  
+  //Makes it rain confetti and makes the players animate when savebtn is pressed
   makeItRain() {
-    this.playVictorySound()
-    import("@lrnwebcomponents/multiple-choice/lib/confetti-container.js").then(
-      (module) => {
-        setTimeout(() => {
-          this.shadowRoot.querySelector("#confetti").setAttribute("popped", "");
-        }, 0);
-      }
-    );
+
+    if (!this.players.includes("ENTER")) {
+      window.alert(this.players + " have been added to your project!");
+
+      this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+        player.setAttribute('walking', '');
+      });
+      
+      import("@lrnwebcomponents/multiple-choice/lib/confetti-container.js").then(
+        (module) => {
+          setTimeout(() => {
+            this.shadowRoot.querySelector("#confetti").setAttribute("popped", "");
+          }, 0);
+        }
+      );
+    } else {
+      window.alert("There is a player that has not been filled out!");
+    }
+
+   
   }
   
+  //Adds a new player at the end of the list
   add(e) {
-    this.players.push("");
+
+    this.noWalk();
+
+    this.players.push("ENTER");
     this.numChar++;
 
     if (this.numChar > 4) {
@@ -199,7 +251,11 @@ export class PartyUI extends DDD {
     this.requestUpdate(); 
   }
 
+  //Removes the player selected from the list
   remove(index) {
+
+    this.noWalk();
+
     if (this.numChar > 1) {
       this.players.splice(index, 1); 
       this.numChar--;
@@ -212,17 +268,36 @@ export class PartyUI extends DDD {
     } 
   }
 
+  //Saves the player's new name if there are no caps, spaces, special chars, repeat names
+  //Otherwise it provides an alert message and sets the name to the default "ENTER"
   saveName(e, index) {
+
+    this.noWalk();
+
     const newName = e.target.value;
-    if (newName.trim() !== "") {
-      this.players[index] = newName;
+    this.players[index] = "ENTER";
+    if (/^[a-z0-9]{1,10}$/.test(newName)) {
+      if (!this.players.includes(newName)) {
+        
+        this.players[index] = newName;
+        
+      } else {
+        window.alert("Player is already added!");
+        this.players[index] = "ENTER";
+      }
     } else {
+      window.alert("Name can only have lowercase letters and numbers!\n No spaces either!");
       this.players[index] = "ENTER";
     }
+
     this.requestUpdate();
   }
 
+  //Everytime something is typed in a text field it updates the player
   updateName(e, index) {
+
+    this.noWalk();
+
     const newName = e.target.value;
     this.players[index] = newName;
     if (newName !== "") {
@@ -230,6 +305,7 @@ export class PartyUI extends DDD {
     }
   }
 
+  //Moves the list of viewable players down 1
   moveBack() {
     if (this.startIndex > 0) {
       this.startIndex--;
@@ -237,6 +313,7 @@ export class PartyUI extends DDD {
     }
   }
   
+  //Moves the list of viewable players up 1
   moveForward() {
     if (this.startIndex < this.players.length - 4) {
       this.startIndex++;
@@ -244,8 +321,26 @@ export class PartyUI extends DDD {
     }
   }
 
-  playVictorySound() {
-    this.soundEffects.victory.play();
+  //Removes walking animation if something changes (add/remove char, etc)
+  noWalk() {
+    this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+      player.removeAttribute('walking');
+    });
+  }
+
+  setAblaze() {
+    if (!this.ablaze) {
+      this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+        player.setAttribute('fire', '');
+      });
+      this.ablaze = !this.ablaze;
+
+    } else {
+      this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+        player.removeAttribute('fire');
+      });
+      this.ablaze = !this.ablaze;
+    }
   }
   
   render() {
@@ -255,6 +350,7 @@ export class PartyUI extends DDD {
 
     return html`
       <div class="project1">
+        <div class="title">PRESS START</div>
         <div class="lightbg">
           <confetti-container id="confetti">
             <div class="darkbg">
@@ -302,13 +398,19 @@ export class PartyUI extends DDD {
               </div>
 
               <!-- Save button that runs the confetti -->
-              <div class="savebtnwrap">
-                <button @click="${this.makeItRain}" class="finishbtn">> SAVE PLAYERS</button>
+              <div class="bottombtnwrap">
+                <button @click="${this.setAblaze}" class="firebtn">> FIRE IN THE HOLE!</button>
+                <button @click="${this.makeItRain}" class="finishbtn">> START JOURNEY</button>
               </div>
             </div>
           </confetti-container>
         </div>
       </div>
+
+      <!-- a super secrety secret (its a secret) -->
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+        <button class="secret"></button>
+      </a>
     `;
   }
   
@@ -317,6 +419,8 @@ export class PartyUI extends DDD {
         players: { type: Array },
         numChar: { type: Number, reflect: true},
         startIndex: { type: Number, reflect: true},
+        walkingBool: { type: Boolean, reflect: true},
+        ablaze: { type: Boolean, reflect: true},
     };
   }
 }
