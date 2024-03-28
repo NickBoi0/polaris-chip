@@ -11,11 +11,12 @@ export class PartyUI extends DDD {
   constructor() {
     super();
     this.players = ["You", "ENTER"];
-    this.numChar = 2;
+    this.numChar = 1;
     this.startIndex = 0;
     this.ablaze = false;
     this.backArrowBool = false;
     this.forwardArrowBool = false;
+    this.fireText = "> FIRE IN THE HOLE!";
   }
 
   static get styles() {
@@ -24,13 +25,30 @@ export class PartyUI extends DDD {
 
       :host {
         display: flex;
-
-        background-image: url("https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg");
+        background-image: var(--background-image-url, url(
+          "https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg"
+        ));
+        background-repeat: no-repeat;
+        background-size: cover;
         justify-content: center; 
         align-items: center; 
         height: 100vh;
       }
 
+      /* Background changes when ablaze is set to true */
+      :host([ablaze]) .darkbg {
+        background-image: url("https://media4.giphy.com/media/WE066ErCk0Z91fLgaJ/giphy.gif?cid=6c09b952q3jdeclmtmluith4nr4mwfbf680vn9j9qmr8c6pz&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: #420300;
+        border-color: var(--ddd-theme-default-roarGolden);
+      }
+      :host([ablaze]) .lightbg {
+        background-color: #610601;
+        border-color: var(--ddd-theme-default-roarGolden);
+      }
+
+      /* If forward and back arrow are able to be used, this change occurs */
       :host([backArrowBool]) .backarrow {
         opacity: 1;
         color: white;
@@ -39,21 +57,29 @@ export class PartyUI extends DDD {
         opacity: 1;
         color: white;
       } 
-      :host([backArrowBool="true"]) .backarrow:focus, .backarrow:hover {
-        animation: blinker .5s linear infinite;
+      :host([backArrowBool]) .backarrow:focus {
+        animation: blinker .5s linear infinite
       }   
-      :host([forwardArrowBool="true"]) .forwardarrow:focus, .forwardarrow:hover {
+      :host([backArrowBool]) .backarrow:hover {
+        animation: blinker .5s linear infinite
+      }   
+      :host([forwardArrowBool]) .forwardarrow:focus{
+        animation: blinker .5s linear infinite;
+      }
+      :host([forwardArrowBool]) .forwardarrow:hover{
         animation: blinker .5s linear infinite;
       }
 
       /* ignore this it's a secret :) */
       .secret {
         position: relative;
-        top: 95px;
-        left: 183px;
+        top: 100px;
+        left: 188px;
         
         padding: 5px;
-        border: white;
+        border: transparent;
+        background-color: transparent;
+        color: white;
       }
 
       .lightbg {
@@ -85,18 +111,15 @@ export class PartyUI extends DDD {
         color: white;
         font-family: "Press Start 2P", system-ui;
         margin-right: var(--ddd-spacing-6);
+        background-color: transparent;
 
         transition: .3s all ease-in-out;
       }
 
       .addsymbl {
-        font-size: 50px;
         margin: var(--ddd-spacing-6);
-        background-color: transparent;
-        border: transparent;
-        color: white;
-
-        transition: .3s all ease-in-out;
+        font-size: 50px;
+        font-family: "Press Start 2P", system-ui;
       }
       
       .numchar {
@@ -205,8 +228,6 @@ export class PartyUI extends DDD {
         animation: blinker .5s linear infinite;
       }
       
-      .addsymbl:focus,
-      .addsymbl:hover,
       .addbtn:focus,
       .addbtn:hover {
         color: var(--ddd-theme-default-potential50);
@@ -220,7 +241,7 @@ export class PartyUI extends DDD {
       }
       @keyframes blinker2 {
         50% {
-          opacity: 0;
+          opacity: .1;
         }
       }
     `;
@@ -228,13 +249,20 @@ export class PartyUI extends DDD {
 
   //Makes it rain confetti and makes the players animate when savebtn is pressed
   makeItRain() {
+    
+    const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
 
+    //Success "screen"
     if (!this.players.includes("ENTER")) {
       window.alert(this.players + " have been added to your project!");
 
+      //Animates characters
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
         player.setAttribute('walking', '');
       });
+
+      const success = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/success.mp3');
+      success.play();
       
       import("@lrnwebcomponents/multiple-choice/lib/confetti-container.js").then(
         (module) => {
@@ -244,6 +272,8 @@ export class PartyUI extends DDD {
         }
       );
     } else {
+      //A player was not gives a name
+      error.play();
       window.alert("There is a player that has not been filled out!");
     }
 
@@ -255,10 +285,15 @@ export class PartyUI extends DDD {
 
     this.noWalk();
 
+    const click = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/coin.mp3');
+    click.play();
+
+    //Pushes a new item into the list and increments the number of players added
     this.players.push("ENTER");
     this.numChar++;
 
-    if (this.numChar > 4) {
+    //If there are already 3 added players, adding a 4th will increment starting index
+    if (this.numChar > 3) {
       this.startIndex++;
     }
     this.updateArrowStyles();
@@ -270,16 +305,25 @@ export class PartyUI extends DDD {
 
     this.noWalk();
     
+    //Only deletes a player if there is more than 1
     if (this.numChar > 1) {
       this.players.splice(index, 1); 
       this.numChar--;
 
+      const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
+      beep.play();
+
+      //If the starting index isnt 0, deleting a player will move it down 1
       if (this.startIndex != 0) {
         this.startIndex--;
       }
       this.updateArrowStyles();
       this.requestUpdate(); 
-    } 
+    } else {
+      //If you try to delete the last player
+      const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
+      error.play();
+    }
   }
 
   //Saves the player's new name if there are no caps, spaces, special chars, repeat names
@@ -287,19 +331,34 @@ export class PartyUI extends DDD {
   saveName(e, index) {
 
     this.noWalk();
+    const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
 
+    //Gets the name from the text field
     const newName = e.target.value;
+
+    //Because the name is automatically being updated when anything is typed, this prevents
+    //the code thinking the player is already added by temporarily resetting the name
     this.players[index] = "ENTER";
+
+    //Checks if the name chars are correct
     if (/^[a-z0-9]{1,10}$/.test(newName)) {
+
+      //Checks if there is no name repeat
       if (!this.players.includes(newName)) {
         
         this.players[index] = newName;
+        const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
+        beep.play();
         
       } else {
+        //If there is a repeat name
+        error.play();
         window.alert("Player is already added!");
         this.players[index] = "ENTER";
       }
     } else {
+      //If there are uppercase letters, spaces, or special chars
+      error.play();
       window.alert("Name can only have lowercase letters and numbers!\n No spaces either!");
       this.players[index] = "ENTER";
     }
@@ -312,6 +371,10 @@ export class PartyUI extends DDD {
 
     this.noWalk();
 
+    const type = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click.mp3');
+    type.play();
+
+    //Updates the name so the player skin changes
     const newName = e.target.value;
     this.players[index] = newName;
     if (newName !== "") {
@@ -321,19 +384,35 @@ export class PartyUI extends DDD {
 
   //Moves the list of viewable players down 1
   moveBack() {
+    
+    //Moves starting index down 1 to go down the list
     if (this.startIndex > 0) {
       this.startIndex--;
+      const click = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
+      click.play();
       this.updateArrowStyles();
       this.requestUpdate();
+    } else {
+      //If you can't go back
+      const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
+      error.play();
     }
   }
   
   //Moves the list of viewable players up 1
   moveForward() {
+
+    //Moves the starting index up 1 to go up the list
     if (this.startIndex < this.players.length - 4) {
       this.startIndex++;
+      const click = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
+      click.play();
       this.updateArrowStyles();
       this.requestUpdate();
+    } else {
+      //If you can't go up
+      const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
+      error.play();
     }
   }
 
@@ -346,17 +425,34 @@ export class PartyUI extends DDD {
 
   //Sets fire to the players
   setAblaze() {
+    
+    //Sets the player attribute fire to true so that all current players are on fire
     if (!this.ablaze) {
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
         player.setAttribute('fire', '');
       });
+      //Changes background to be lava
       this.ablaze = !this.ablaze;
+      this.style.setProperty('--background-image-url', 
+      'url("https://garden.spoonflower.com/c/4646962/p/f/m/KA0PsWp8POkicAAYEycLjIh87elCPS-9Efxw52xViSNDMH2-05QGW-Ag/8-bit%20Lava%20Block%20Design%20Two.jpg")',
+      );
+
+      const FIREINTHEHOLE = new Audio('https://www.myinstants.com/media/sounds/fire-in-the-hole-geometry-dash.mp3');
+      const buzz = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/hit.mp3');
+      FIREINTHEHOLE.play();
+      buzz.play();
+      this.fireText = "> OH GOD IT BURNS!";
 
     } else {
+      //If players are already on fire the attribute will revert back
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
         player.removeAttribute('fire');
       });
       this.ablaze = !this.ablaze;
+      this.style.setProperty('--background-image-url', 'url("https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg")');
+      const waterDrop = new Audio('https://www.myinstants.com/media/sounds/water-drop-plop.mp3');
+      waterDrop.play();
+      this.fireText = "> FIRE IN THE HOLE!";
     }
   }
 
@@ -378,6 +474,13 @@ export class PartyUI extends DDD {
     this.requestUpdate();
   }
   
+  //Ignore this it's a secret (seriously)
+  secret() {
+    //Don't worry about this part, it's secret
+    const secretaudio = new Audio("https://www.myinstants.com/media/sounds/epic.mp3");
+    secretaudio.play();
+  }
+
   render() {
 
     //Only shows a max of 4 players at a time (for screen fitting purposes)
@@ -419,10 +522,10 @@ export class PartyUI extends DDD {
                 `)}
 
                 <!-- The add button to add new players -->
-                <div class=addbtn>
-                  <button @click="${this.add}" class="addsymbl">+</button>
+                <button @click="${this.add}" class="addbtn">
+                  <div class="addsymbl">+</div>
                   <div class="numchar">${this.numChar} <br> Added</div>
-                </div>
+                </button>
 
                 <!-- Forward arrow that only appears if there are players with a high index that are hidden -->
                 <button @click="${this.moveForward}" class="forwardarrow">></button>
@@ -430,7 +533,7 @@ export class PartyUI extends DDD {
 
               <!-- Save button that runs the confetti -->
               <div class="bottombtnwrap">
-                <button @click="${this.setAblaze}" class="firebtn">> FIRE IN THE HOLE!</button>
+                <button @click="${this.setAblaze}" class="firebtn">${this.fireText}</button>
                 <button @click="${this.makeItRain}" class="finishbtn">> START JOURNEY</button>
               </div>
             </div>
@@ -439,9 +542,7 @@ export class PartyUI extends DDD {
       </div>
 
       <!-- a super secrety secret (its a secret) -->
-      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
-        <button class="secret"></button>
-      </a>
+      <button @click="${this.secret}" class="secret">?</button>
     `;
   }
   
@@ -454,6 +555,7 @@ export class PartyUI extends DDD {
         ablaze: { type: Boolean, reflect: true},
         backArrowBool: { type: Boolean, reflect: true},
         forwardArrowBool: { type: Boolean, reflect: true},
+        fireText: { type: String, reflect: true},
     };
   }
 }
