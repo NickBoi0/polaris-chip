@@ -17,6 +17,20 @@ export class PartyUI extends DDD {
     this.backArrowBool = false;
     this.forwardArrowBool = false;
     this.fireText = "> FIRE IN THE HOLE!";
+    this.errorText = "";
+    this.successText = "";
+    this.hatList = [
+      "bunny",
+      "coffee",
+      "construction",
+      "cowboy",
+      "education",
+      "knight",
+      "ninja",
+      "party",
+      "pirate",
+      "watermelon",
+    ];
   }
 
   static get styles() {
@@ -201,6 +215,25 @@ export class PartyUI extends DDD {
         font-family: "Press Start 2P", system-ui;
       }
 
+      .errorText,
+      .successText {
+        text-align: center;
+        font-size: 30px;
+        font-family: "Press Start 2P", system-ui;
+        overflow-wrap: break-word;
+        width: 925px;
+        margin-left: var(--ddd-spacing-11);
+        margin-top: var(--ddd-spacing-2);
+      }
+      .errorText {
+        color: var(--ddd-theme-default-error);
+        background-color: var(--ddd-theme-default-roarGolden);
+      }
+      .successText {
+        color: var(--ddd-theme-default-opportunityGreen);
+        background-color: var(--ddd-theme-default-futureLime);
+      }
+
       .backarrow,
       .forwardarrow {
         font-family: "Press Start 2P", system-ui;
@@ -214,7 +247,7 @@ export class PartyUI extends DDD {
 
       .title {
         font-size: 50px;
-        animation: blinker2 2s linear infinite;
+        animation: blinker2 1s infinite;
       }
       
       .removebtn:focus,
@@ -240,10 +273,13 @@ export class PartyUI extends DDD {
         }
       }
       @keyframes blinker2 {
-        50% {
-          opacity: .1;
+        0%, 50% {
+          opacity: 0;
         }
-      }
+        51%, 100% {
+          opacity: 1;
+        }
+    }
     `;
   }
 
@@ -254,12 +290,18 @@ export class PartyUI extends DDD {
 
     //Success "screen"
     if (!this.players.includes("ENTER")) {
-      window.alert(this.players + " have been added to your project!");
+      this.successText = this.players + " have been added to your project!";
 
       //Animates characters
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
         player.setAttribute('walking', '');
       });
+
+      this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+        player.setAttribute('hat', 'random');
+      });
+
+      this.errorText = "";
 
       const success = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/success.mp3');
       success.play();
@@ -274,7 +316,7 @@ export class PartyUI extends DDD {
     } else {
       //A player was not gives a name
       error.play();
-      window.alert("There is a player that has not been filled out!");
+      this.errorText = "There is a player that has not been filled out!";
     }
 
    
@@ -297,6 +339,7 @@ export class PartyUI extends DDD {
       this.startIndex++;
     }
     this.updateArrowStyles();
+    this.errorText = "";
     this.requestUpdate(); 
   }
 
@@ -318,11 +361,13 @@ export class PartyUI extends DDD {
         this.startIndex--;
       }
       this.updateArrowStyles();
+      this.errorText = "";
       this.requestUpdate(); 
     } else {
       //If you try to delete the last player
       const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
       error.play();
+      this.errorText = "Deleting the last new player? How rude.";
     }
   }
 
@@ -347,22 +392,22 @@ export class PartyUI extends DDD {
       if (!this.players.includes(newName)) {
         
         this.players[index] = newName;
+        this.errorText = "";
         const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
         beep.play();
         
       } else {
         //If there is a repeat name
         error.play();
-        window.alert("Player is already added!");
+        this.errorText = "Player is already added!";
         this.players[index] = "ENTER";
       }
     } else {
       //If there are uppercase letters, spaces, or special chars
       error.play();
-      window.alert("Name can only have lowercase letters and numbers!\n No spaces either!");
+      this.errorText = "Name can only have lowercase letters and numbers!\n No spaces either!";
       this.players[index] = "ENTER";
     }
-
     this.requestUpdate();
   }
 
@@ -416,11 +461,18 @@ export class PartyUI extends DDD {
     }
   }
 
-  //Removes walking animation if something changes (add/remove char, etc)
+  //Removes animations if something changes (add/remove char, etc)
   noWalk() {
     this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
       player.removeAttribute('walking');
     });
+    this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+      player.setAttribute('leg', "");
+    });
+    this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
+      player.setAttribute('hat', "none");
+    });
+    this.successText = "";
   }
 
   //Sets fire to the players
@@ -529,6 +581,7 @@ export class PartyUI extends DDD {
 
                 <!-- Forward arrow that only appears if there are players with a high index that are hidden -->
                 <button @click="${this.moveForward}" class="forwardarrow">></button>
+
               </div>
 
               <!-- Save button that runs the confetti -->
@@ -539,6 +592,8 @@ export class PartyUI extends DDD {
             </div>
           </confetti-container>
         </div>
+        <div class="errorText">${this.errorText}</div>
+        <div class="successText">${this.successText}</div>
       </div>
 
       <!-- a super secrety secret (its a secret) -->
@@ -548,7 +603,7 @@ export class PartyUI extends DDD {
   
   static get properties() {
     return {
-        players: { type: Array },
+        players: { type: Array, reflect: true },
         numChar: { type: Number, reflect: true},
         startIndex: { type: Number, reflect: true},
         walkingBool: { type: Boolean, reflect: true},
@@ -556,6 +611,9 @@ export class PartyUI extends DDD {
         backArrowBool: { type: Boolean, reflect: true},
         forwardArrowBool: { type: Boolean, reflect: true},
         fireText: { type: String, reflect: true},
+        successText: { type: String, reflect: true},
+        errorText: { type: String, reflect: true},
+        hatList: { type: Array, reflect: true}
     };
   }
 }
