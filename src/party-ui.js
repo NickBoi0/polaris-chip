@@ -18,8 +18,8 @@ export class PartyUI extends DDD {
     this.backArrowBool = false;
     this.forwardArrowBool = false;
     this.fireText = "> FIRE IN THE HOLE!";
-    this.errorText = "X X ERROR NOT FOUND X X";
-    this.successText = "X X SUCCESS NOT FOUND X X";
+    this.errorText = "ERROR 00: SAFE FROM ERRORS";
+    this.successText = "ERROR 404: JOURNEY NOT STARTED";
     this.title = "<PRESS START>";
   }
 
@@ -283,7 +283,8 @@ export class PartyUI extends DDD {
 
     //Success "screen"
     if (!this.players.includes("ENTER")) {
-      this.successText = this.players + " have been added to your project!";
+      const newList = this.players.slice(1);
+      this.successText = newList.toString().toUpperCase() + " HAVE SUCCESSFULLY BEEN ADDED TO YOUR PARTY!";
 
       //Animates characters
       this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
@@ -309,7 +310,7 @@ export class PartyUI extends DDD {
     } else {
       //A player was not gives a name
       error.play();
-      this.errorText = "There is a player that has not been filled out!";
+      this.errorText = "ERROR 01: A PLAYER HAS NOT BEEN FILLED OUT!";
     }
 
    
@@ -329,7 +330,7 @@ export class PartyUI extends DDD {
 
     //If there are already 3 added players, adding a 4th will increment starting index
     if (this.numChar > 3) {
-      this.startIndex++;
+      this.startIndex = this.players.length - 4;
     }
     this.updateArrowStyles();
     this.clearError();
@@ -346,8 +347,8 @@ export class PartyUI extends DDD {
       this.players.splice(index, 1); 
       this.numChar--;
 
-      const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
-      beep.play();
+      const remove = new Audio('https://cdn.pixabay.com/audio/2023/06/01/audio_c959307af8.mp3');
+      remove.play();
 
       //If the starting index isnt 0, deleting a player will move it down 1
       if (this.startIndex != 0) {
@@ -360,7 +361,7 @@ export class PartyUI extends DDD {
       //If you try to delete the last player
       const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
       error.play();
-      this.errorText = "Deleting the last new player? How rude.";
+      this.errorText = "ERROR 02: TERMINATION OF THIS PLAYER WILL RESULT IN CATOSTROPHIC CONSEQUENCES!";
     }
   }
 
@@ -386,19 +387,19 @@ export class PartyUI extends DDD {
         
         this.players[index] = newName;
         this.clearError();
-        const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
-        beep.play();
+        const bading = new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_2d39932aa9.mp3');
+        bading.play();
         
       } else {
         //If there is a repeat name
         error.play();
-        this.errorText = "Player is already added!";
+        this.errorText = "ERROR 03: PLAYER HAS ALREADY JOINED THE PARTY!";
         this.players[index] = "ENTER";
       }
     } else {
       //If there are uppercase letters, spaces, or special chars
       error.play();
-      this.errorText = "Name can only have lowercase letters and numbers!\n No spaces either!";
+      this.errorText = "ERROR 04: NAMES CAN ONLY CONTAIN LOWERCASE LETTERS AND NUMBERS!";
       this.players[index] = "ENTER";
     }
     this.requestUpdate();
@@ -409,15 +410,16 @@ export class PartyUI extends DDD {
 
     this.noWalk();
 
-    const type = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click.mp3');
-    type.play();
-
     //Updates the name so the player skin changes
     const newName = e.target.value;
     this.players[index] = newName;
     if (newName !== "") {
       this.requestUpdate();
     }
+
+    const type = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click.mp3');
+    type.play();
+
   }
 
   //Moves the list of viewable players down 1
@@ -432,8 +434,8 @@ export class PartyUI extends DDD {
       this.requestUpdate();
     } else {
       //If you can't go back
-      const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
-      error.play();
+      const noClick = new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_35e85ca150.mp3');
+      noClick.play();
     }
   }
   
@@ -449,8 +451,8 @@ export class PartyUI extends DDD {
       this.requestUpdate();
     } else {
       //If you can't go up
-      const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
-      error.play();
+      const noClick = new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_35e85ca150.mp3');
+      noClick.play();
     }
   }
 
@@ -465,8 +467,8 @@ export class PartyUI extends DDD {
     this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
       player.setAttribute('hat', "none");
     });
-    if (this.successText != "X X SUCCES NOT FOUND X X") {
-      this.successText = "X X SUCCESS NOT FOUND X X";
+    if (this.successText != "ERROR 404: JOURNEY NOT STARTED") {
+      this.successText = "ERROR 404: JOURNEY NOT STARTED";
     }
   }
 
@@ -522,8 +524,8 @@ export class PartyUI extends DDD {
   }
 
   clearError() {
-    if (this.errorText != "X X ERROR NOT FOUND X X") {
-      this.errorText = "X X NO ERROR NOT FOUND X X";
+    if (this.errorText != "ERROR 00: SAFE FROM ERRORS") {
+      this.errorText = "ERROR 00: SAFE FROM ERRORS";
     }
   }
   
@@ -594,10 +596,10 @@ export class PartyUI extends DDD {
           </confetti-container>
         </div>
         <div class="errorText">
-          <type-writer delay="100" text="${this.errorText}" erase-speed="25" speed="50"></type-writer>
+          <type-writer delay="100" text="${this.errorText}" erase-speed="15" speed="50"></type-writer>
         </div>
         <div class="successText">
-          <type-writer delay="100" text="${this.successText}" erase-speed="25" speed="50"></type-writer>
+          <type-writer delay="100" text="${this.successText}" erase-speed="15" speed="50"></type-writer>
         </div>
       </div>
 
