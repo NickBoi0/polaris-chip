@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { DDD } from "@lrnwebcomponents/d-d-d/d-d-d.js";
 import "@lrnwebcomponents/rpg-character/rpg-character.js";
+import "@lrnwebcomponents/type-writer/type-writer.js";
 
 export class PartyUI extends DDD {
 
@@ -17,20 +18,9 @@ export class PartyUI extends DDD {
     this.backArrowBool = false;
     this.forwardArrowBool = false;
     this.fireText = "> FIRE IN THE HOLE!";
-    this.errorText = "";
-    this.successText = "";
-    this.hatList = [
-      "bunny",
-      "coffee",
-      "construction",
-      "cowboy",
-      "education",
-      "knight",
-      "ninja",
-      "party",
-      "pirate",
-      "watermelon",
-    ];
+    this.errorText = "X X ERROR NOT FOUND X X";
+    this.successText = "X X SUCCESS NOT FOUND X X";
+    this.title = "<PRESS START>";
   }
 
   static get styles() {
@@ -224,14 +214,17 @@ export class PartyUI extends DDD {
         width: 925px;
         margin-left: var(--ddd-spacing-11);
         margin-top: var(--ddd-spacing-2);
+        padding: var(--ddd-spacing-2);
       }
       .errorText {
         color: var(--ddd-theme-default-error);
         background-color: var(--ddd-theme-default-roarGolden);
+        border: var(--ddd-theme-default-error) 5px dashed;
       }
       .successText {
         color: var(--ddd-theme-default-opportunityGreen);
         background-color: var(--ddd-theme-default-futureLime);
+        border: var(--ddd-theme-default-opportunityGreen) 5px dashed;
       }
 
       .backarrow,
@@ -301,7 +294,7 @@ export class PartyUI extends DDD {
         player.setAttribute('hat', 'random');
       });
 
-      this.errorText = "";
+      this.clearError();
 
       const success = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/success.mp3');
       success.play();
@@ -339,7 +332,7 @@ export class PartyUI extends DDD {
       this.startIndex++;
     }
     this.updateArrowStyles();
-    this.errorText = "";
+    this.clearError();
     this.requestUpdate(); 
   }
 
@@ -361,7 +354,7 @@ export class PartyUI extends DDD {
         this.startIndex--;
       }
       this.updateArrowStyles();
-      this.errorText = "";
+      this.clearError();
       this.requestUpdate(); 
     } else {
       //If you try to delete the last player
@@ -392,7 +385,7 @@ export class PartyUI extends DDD {
       if (!this.players.includes(newName)) {
         
         this.players[index] = newName;
-        this.errorText = "";
+        this.clearError();
         const beep = new Audio('https://hax.psu.edu/cdn/1.x.x/build/es6/node_modules/@lrnwebcomponents/app-hax/lib/assets/sounds/click2.mp3');
         beep.play();
         
@@ -472,7 +465,9 @@ export class PartyUI extends DDD {
     this.shadowRoot.querySelectorAll("rpg-character").forEach(player => {
       player.setAttribute('hat', "none");
     });
-    this.successText = "";
+    if (this.successText != "X X SUCCES NOT FOUND X X") {
+      this.successText = "X X SUCCESS NOT FOUND X X";
+    }
   }
 
   //Sets fire to the players
@@ -525,6 +520,12 @@ export class PartyUI extends DDD {
 
     this.requestUpdate();
   }
+
+  clearError() {
+    if (this.errorText != "X X ERROR NOT FOUND X X") {
+      this.errorText = "X X NO ERROR NOT FOUND X X";
+    }
+  }
   
   //Ignore this it's a secret (seriously)
   secret() {
@@ -540,7 +541,7 @@ export class PartyUI extends DDD {
 
     return html`
       <div class="project1">
-        <div class="title">PRESS START</div>
+        <div class="title">${this.title}</div>
         <div class="lightbg">
           <confetti-container id="confetti">
             <div class="darkbg">
@@ -592,8 +593,12 @@ export class PartyUI extends DDD {
             </div>
           </confetti-container>
         </div>
-        <div class="errorText">${this.errorText}</div>
-        <div class="successText">${this.successText}</div>
+        <div class="errorText">
+          <type-writer delay="100" text="${this.errorText}" erase-speed="25" speed="50"></type-writer>
+        </div>
+        <div class="successText">
+          <type-writer delay="100" text="${this.successText}" erase-speed="25" speed="50"></type-writer>
+        </div>
       </div>
 
       <!-- a super secrety secret (its a secret) -->
@@ -613,7 +618,7 @@ export class PartyUI extends DDD {
         fireText: { type: String, reflect: true},
         successText: { type: String, reflect: true},
         errorText: { type: String, reflect: true},
-        hatList: { type: Array, reflect: true}
+        title: { type: String, reflect: true},
     };
   }
 }
