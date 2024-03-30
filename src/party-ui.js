@@ -30,7 +30,7 @@ export class PartyUI extends DDD {
       :host {
         display: flex;
         background-image: var(--background-image-url, url(
-          "https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg"
+          "https://cdn.discordapp.com/attachments/696410557300998244/1223703432381202552/background_thingy.png?ex=661ad1a1&is=66085ca1&hm=0fe027db679bfaf2586b9e5159984e8fc3f043a177e6a57a6fc3a28bd3f0b144&"
         ));
         background-repeat: no-repeat;
         background-size: cover;
@@ -40,16 +40,12 @@ export class PartyUI extends DDD {
       }
 
       /* Background changes when ablaze is set to true */
-      :host([ablaze]) .darkbg {
+      :host([ablaze]) .uibg {
+        background-color: #420300;
+        border-color: var(--ddd-theme-default-roarGolden);
         background-image: url("https://media4.giphy.com/media/WE066ErCk0Z91fLgaJ/giphy.gif?cid=6c09b952q3jdeclmtmluith4nr4mwfbf680vn9j9qmr8c6pz&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s");
         background-repeat: no-repeat;
         background-size: cover;
-        background-color: #420300;
-        border-color: var(--ddd-theme-default-roarGolden);
-      }
-      :host([ablaze]) .lightbg {
-        background-color: #610601;
-        border-color: var(--ddd-theme-default-roarGolden);
       }
 
       /* If forward and back arrow are able to be used, this change occurs */
@@ -78,7 +74,7 @@ export class PartyUI extends DDD {
       .secret {
         position: relative;
         top: 100px;
-        left: 188px;
+        left: 170px;
         
         padding: 5px;
         border: transparent;
@@ -86,26 +82,25 @@ export class PartyUI extends DDD {
         color: white;
       }
 
-      .lightbg {
-        background-color: var(--ddd-theme-default-nittanyNavy);
+      .uibg {
+        background-color: var(--ddd-theme-default-beaverBlue);
         padding: var(--ddd-spacing-4);
         height: 525px;
         width: 975px;
         display: flex;
-        border: 3px solid var(--ddd-theme-default-slateLight);
+        border: var(--ddd-theme-default-nittanyNavy) 20px outset;
 
         flex-direction: column;
         align-items: center;
         overflow: hidden;
       }
 
-      .darkbg {
-        background-color: var(--ddd-theme-default-beaverBlue);
+      .bgspacing {
+        background-color: transparent;
         height: 510px;
         width: 925px;
         margin-top: var(--ddd-spacing-4);
         padding: var(--ddd-spacing-4);
-        border: 3px solid var(--ddd-theme-default-skyMaxLight);
       }
 
       .addbtn {
@@ -498,7 +493,7 @@ export class PartyUI extends DDD {
         player.removeAttribute('fire');
       });
       this.ablaze = !this.ablaze;
-      this.style.setProperty('--background-image-url', 'url("https://static.vecteezy.com/system/resources/previews/009/877/699/non_2x/pixel-art-night-sky-background-with-clouds-and-stars-for-game-8-bit-vector.jpg")');
+      this.style.setProperty('--background-image-url', 'url("https://cdn.discordapp.com/attachments/696410557300998244/1223703432381202552/background_thingy.png?ex=661ad1a1&is=66085ca1&hm=0fe027db679bfaf2586b9e5159984e8fc3f043a177e6a57a6fc3a28bd3f0b144&")');
       const waterDrop = new Audio('https://www.myinstants.com/media/sounds/water-drop-plop.mp3');
       waterDrop.play();
       this.fireText = "> FIRE IN THE HOLE!";
@@ -544,9 +539,9 @@ export class PartyUI extends DDD {
     return html`
       <div class="project1">
         <div class="title">${this.title}</div>
-        <div class="lightbg">
+        <div class="uibg">
           <confetti-container id="confetti">
-            <div class="darkbg">
+            <div class="bgspacing">
               <div class="charlist">
 
               <!-- Back arrow that only appears if there are players with a low index that are hidden -->
