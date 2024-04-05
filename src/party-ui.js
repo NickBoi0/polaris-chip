@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, render } from 'lit';
 import { DDD } from "@lrnwebcomponents/d-d-d/d-d-d.js";
 import "@lrnwebcomponents/rpg-character/rpg-character.js";
 import "@lrnwebcomponents/type-writer/type-writer.js";
@@ -58,16 +58,16 @@ export class PartyUI extends DDD {
         color: white;
       } 
       :host([backArrowBool]) .backarrow:focus {
-        animation: blinker .5s linear infinite
+        animation: blinker .5s linear 3;
       }   
       :host([backArrowBool]) .backarrow:hover {
-        animation: blinker .5s linear infinite
+        animation: blinker .5s linear 3;
       }   
       :host([forwardArrowBool]) .forwardarrow:focus{
-        animation: blinker .5s linear infinite;
+        animation: blinker .5s linear 3;
       }
       :host([forwardArrowBool]) .forwardarrow:hover{
-        animation: blinker .5s linear infinite;
+        animation: blinker .5s linear 3;
       }
 
       /* ignore this it's a secret :) */
@@ -137,6 +137,14 @@ export class PartyUI extends DDD {
 
       .character-wrapper {
         margin-bottom: var(--ddd-spacing-3);
+        transition:
+          rotate 2s,
+          scale 2s;
+      }
+
+      .character-wrapper:hover,
+      .character-wrapper:focus{
+        animation: jump .5s ease infinite;
       }
 
       .nametf {
@@ -163,16 +171,7 @@ export class PartyUI extends DDD {
         margin-top: var(--ddd-spacing-3);
       }
 
-      .savebtn {
-        background: transparent;
-        border: transparent;
-        color: white;
-        font-size: 15px;
-        font-family: "Press Start 2P", system-ui;
-      }
-
       .removebtn {
-        margin-top: var(--ddd-spacing-4);
         background: transparent;
         border: transparent;
         color: white;
@@ -240,13 +239,11 @@ export class PartyUI extends DDD {
       
       .removebtn:focus,
       .removebtn:hover,
-      .savebtn:focus,
-      .savebtn:hover,
       .finishbtn:focus,
       .finishbtn:hover,
       .firebtn:focus,
       .firebtn:hover {
-        animation: blinker .5s linear infinite;
+        animation: blinker .5s linear 3;
       }
       
       .addbtn:focus,
@@ -255,11 +252,13 @@ export class PartyUI extends DDD {
         border-color: var(--ddd-theme-default-potential50);
       }
 
+      /* hover over buttons blinker */
       @keyframes blinker {
         50% {
           opacity: 0;
         }
       }
+      /* title infinite blinker */
       @keyframes blinker2 {
         0%, 50% {
           opacity: 0;
@@ -267,11 +266,20 @@ export class PartyUI extends DDD {
         51%, 100% {
           opacity: 1;
         }
-    }
+      }
+      /* hover over players jump */
+      @keyframes jump {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
     `;
   }
 
-  //Makes it rain confetti and makes the players animate when savebtn is pressed
+  //Makes it rain confetti and makes the players animate when finishbtn is pressed
   makeItRain() {
     
     const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
@@ -333,25 +341,74 @@ export class PartyUI extends DDD {
   }
 
   //Removes the player selected from the list
+  //WILL BREAK (most times) IF SPAMMED :(
   remove(index) {
 
     this.noWalk();
     
     //Only deletes a player if there is more than 1
     if (this.numChar > 1) {
-      this.players.splice(index, 1); 
+
+      const scream = new Audio('https://www.myinstants.com/media/sounds/toms-screams.mp3');
+      scream.play();
+  
       this.numChar--;
 
-      const remove = new Audio('https://cdn.pixabay.com/audio/2023/06/01/audio_c959307af8.mp3');
-      remove.play();
+      //DEATH ANIMATION (what have I done)
+      const players = this.shadowRoot.querySelectorAll("rpg-character");
+      for (let i = 0; i < players.length; i++) {
+          if (i + this.startIndex === index) {
+              const player = players[i];
+              const animation = player.animate([
+                {
+                  transform: "scale(1) rotate(0) skew(0)",
+                },
+                {
+                  transform: "scale(4) rotate(.35turn) skew(50deg)",
+                },
+                {
+                  transform: "scale(.25) rotate(-.25turn) skew(10deg)",
+                },
+                {
+                  transform: "scale(6) rotate(-.5turn) skew(30deg)",
+                },
+                {
+                  transform: "scale(4) rotate(.35turn) skew(50deg)",
+                },
+                {
+                  transform: "scale(.25) rotate(-.25turn) skew(10deg)",
+                },
+                {
+                  transform: "scale(6) rotate(-.5turn) skew(30deg)",
+                },
+                {
+                  transform: "scale(1) rotate(0) skew(0)",
+                }
+              ], {
+                duration: 500,
+                iterations: 4,
+                fill: "forwards",
+              });
 
-      //If the starting index isnt 0, deleting a player will move it down 1
-      if (this.startIndex != 0) {
-        this.startIndex--;
+              animation.onfinish = () => {
+
+                const explode = new Audio('https://www.myinstants.com/media/sounds/minecraft-explode1.mp3');
+                explode.play();
+
+                this.players.splice(index, 1); 
+
+                //If the starting index isnt 0, deleting a player will move it down 1
+                if (this.startIndex != 0) {
+                  this.startIndex--;
+                }
+                this.updateArrowStyles();
+                this.clearError();
+                this.requestUpdate();
+              };
+              break;
+          }
       }
-      this.updateArrowStyles();
-      this.clearError();
-      this.requestUpdate(); 
+
     } else {
       //If you try to delete the last player
       const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
@@ -360,45 +417,44 @@ export class PartyUI extends DDD {
     }
   }
 
+
   //Saves the player's new name if there are no caps, spaces, special chars, repeat names
   //Otherwise it provides an alert message and sets the name to the default "ENTER"
   saveName(e, index) {
-
     this.noWalk();
     const error = new Audio('https://www.myinstants.com/media/sounds/error_CDOxCYm.mp3');
+    const bading = new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_2d39932aa9.mp3');
 
-    //Gets the name from the text field
+    // Because the name is automatically being updated when anything is typed, this prevents
+    // the code thinking the player is already added by temporarily resetting the name
     const newName = e.target.value;
-
-    //Because the name is automatically being updated when anything is typed, this prevents
-    //the code thinking the player is already added by temporarily resetting the name
     this.players[index] = "ENTER";
 
-    //Checks if the name chars are correct
+    // Checks if the name chars are correct
     if (/^[a-z0-9]{1,10}$/.test(newName)) {
 
-      //Checks if there is no name repeat
-      if (!this.players.includes(newName)) {
-        
-        this.players[index] = newName;
-        this.clearError();
-        const bading = new Audio('https://cdn.pixabay.com/audio/2022/03/24/audio_2d39932aa9.mp3');
-        bading.play();
-        
-      } else {
-        //If there is a repeat name
-        error.play();
-        this.errorText = "ERROR 03: PLAYER HAS ALREADY JOINED THE PARTY!";
-        this.players[index] = "ENTER";
-      }
+        // Checks if there is no name repeat
+        if (!this.players.includes(newName)) {
+
+            this.players[index] = newName;
+            this.clearError();
+            bading.play();
+
+        } else {
+            // If there is a repeat name
+            error.play();
+            this.errorText = "ERROR 03: PLAYER HAS ALREADY JOINED THE PARTY!";
+            this.players[index] = "ENTER";
+        }
     } else {
-      //If there are uppercase letters, spaces, or special chars
-      error.play();
-      this.errorText = "ERROR 04: NAMES CAN ONLY CONTAIN LOWERCASE LETTERS AND NUMBERS!";
-      this.players[index] = "ENTER";
+        // If there are uppercase letters, spaces, or special chars
+        error.play();
+        this.errorText = "ERROR 04: NAMES CAN ONLY CONTAIN LOWERCASE LETTERS AND NUMBERS!";
+        this.players[index] = "ENTER";
     }
     this.requestUpdate();
-  }
+}
+
 
   //Everytime something is typed in a text field it updates the player
   updateName(e, index) {
@@ -562,7 +618,6 @@ export class PartyUI extends DDD {
 
                     <!-- Save and delete button only appear on players who aren't you (first index) -->
                       ${index + this.startIndex > 0 ? html`
-                        <button class="savebtn">> SAVE</button>
                         <button @click="${() => this.remove(index + this.startIndex)}" class="removebtn">> REMOVE</button>
                       ` : ''}
 
