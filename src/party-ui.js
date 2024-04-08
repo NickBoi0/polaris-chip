@@ -113,6 +113,7 @@ export class PartyUI extends DDD {
         background-color: transparent;
 
         transition: .3s all ease-in-out;
+        cursor: pointer;
       }
 
       .addsymbl {
@@ -177,6 +178,7 @@ export class PartyUI extends DDD {
         color: white;
         font-size: 15px;
         font-family: "Press Start 2P", system-ui;
+        cursor: pointer;
       }
 
       .bottombtnwrap {
@@ -197,6 +199,7 @@ export class PartyUI extends DDD {
         color: white;
         font-size: 30px;
         font-family: "Press Start 2P", system-ui;
+        cursor: pointer;
       }
 
       .errorText,
@@ -230,6 +233,7 @@ export class PartyUI extends DDD {
         margin-top: var(--ddd-spacing-20);
         background-color: transparent;
         border:  transparent;
+        cursor: pointer;
       }
 
       .title {
@@ -353,6 +357,11 @@ export class PartyUI extends DDD {
       scream.play();
   
       this.numChar--;
+      
+      //If the starting index isnt 0, deleting a player will move it down 1
+      if (this.startIndex != 0) {
+        this.startIndex--;
+      }
 
       //DEATH ANIMATION (what have I done)
       const players = this.shadowRoot.querySelectorAll("rpg-character");
@@ -396,11 +405,6 @@ export class PartyUI extends DDD {
                 explode.play();
 
                 this.players.splice(index, 1); 
-
-                //If the starting index isnt 0, deleting a player will move it down 1
-                if (this.startIndex != 0) {
-                  this.startIndex--;
-                }
                 this.updateArrowStyles();
                 this.clearError();
                 this.requestUpdate();
